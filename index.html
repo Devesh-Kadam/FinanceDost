@@ -1,0 +1,2850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="bank logo.jpg">
+    <title>Finance Dost - Learn Banking the Fun Way!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FF9800;
+            --accent-color: #2196F3;
+            --bg-color: #F0F8FF;
+            --text-color: #333;
+            --card-bg: #FFFFFF;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            --border-radius: 15px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a2e;
+            --text-color: #eee;
+            --card-bg: #16213e;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #E3F2FD 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            transition: var(--transition);
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-logo {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 20px;
+            animation: logoFloat 2s ease-in-out infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-progress {
+            width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            animation: progressFill 3s ease-out forwards;
+        }
+
+        @keyframes logoFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes textPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes progressFill {
+            0% {
+                width: 0%;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+
+        /* Theme Transition Overlay */
+        .theme-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--primary-color) 100%);
+            z-index: 8888;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
+
+        .theme-transition.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: containerSlideIn 0.8s ease-out;
+        }
+
+        @keyframes containerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header Animations */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: headerSlideDown 0.6s ease-out;
+        }
+
+        @keyframes headerSlideDown {
+            from {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.3)"><animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1.5" fill="rgba(255,255,255,0.4)"><animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/></circle><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.2)"><animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite"/></circle></svg>');
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: logoSlideIn 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes logoSlideIn {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+
+            0%,
+            100% {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+
+            50% {
+                text-shadow: 2px 2px 20px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .mascot {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: mascotBounce 2s infinite;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .mascot::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mascot:hover::before {
+            opacity: 1;
+            animation: ringPulse 1s ease-out;
+        }
+
+        .mascot:hover {
+            transform: scale(1.1) rotate(10deg);
+            animation: mascotExcited 0.5s ease-in-out;
+        }
+
+        @keyframes mascotBounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes mascotExcited {
+
+            0%,
+            100% {
+                transform: scale(1.1) rotate(0deg);
+            }
+
+            25% {
+                transform: scale(1.15) rotate(-5deg);
+            }
+
+            75% {
+                transform: scale(1.15) rotate(5deg);
+            }
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            animation: statsSlideIn 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes statsSlideIn {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            animation: statFloat 3s ease-in-out infinite;
+        }
+
+        .stat-item:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+
+        .stat-item:nth-child(3) {
+            animation-delay: 1s;
+        }
+
+        @keyframes statFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .stat-item:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05) translateY(-2px);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.6s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .theme-toggle:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Navigation Animations */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            animation: navSlideUp 0.6s ease-out 0.3s both;
+        }
+
+        @keyframes navSlideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .nav-tab {
+            background: var(--card-bg);
+            border: none;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--text-color);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: tabSlideIn 0.5s ease-out both;
+        }
+
+        .nav-tab:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .nav-tab:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .nav-tab:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .nav-tab:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes tabSlideIn {
+            from {
+                transform: translateY(20px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .nav-tab:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            animation: activeTabPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes activeTabPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 8px 30px rgba(76, 175, 80, 0.4);
+            }
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+
+        /* Content Section Animations */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: sectionFadeIn 0.6s ease-out;
+        }
+
+        @keyframes sectionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Level Cards Enhanced Animations */
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .level-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            animation: cardSlideIn 0.6s ease-out both;
+        }
+
+        .level-card:nth-child(odd) {
+            animation-delay: 0.1s;
+        }
+
+        .level-card:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes cardSlideIn {
+            from {
+                transform: translateY(30px) rotateX(10deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        .level-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(76, 175, 80, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .level-card:hover::before {
+            opacity: 1;
+        }
+
+        .level-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .level-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            animation: lockedShake 0.5s ease-in-out;
+        }
+
+        @keyframes lockedShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-2px);
+            }
+
+            75% {
+                transform: translateX(2px);
+            }
+        }
+
+        .level-card.completed {
+            border: 3px solid var(--primary-color);
+            animation: completedGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes completedGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 8px 30px rgba(76, 175, 80, 0.3);
+            }
+        }
+
+        .level-number {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: numberSpin 0.8s ease-out;
+        }
+
+        @keyframes numberSpin {
+            from {
+                transform: rotate(-180deg) scale(0);
+            }
+
+            to {
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        .level-progress-fill {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .level-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Enhanced Game Animations */
+        .mini-game {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: gameSlideIn 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes gameSlideIn {
+            from {
+                transform: scale(0.9) rotateY(10deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+
+        .mini-game::before {
+            content: '🎮';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            animation: gameIconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes gameIconFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-5px) rotate(10deg);
+            }
+        }
+
+        /* ATM Simulator Enhanced */
+        .atm-simulator {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .atm-screen {
+            background: linear-gradient(135deg, #000, #1a1a1a);
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            min-height: 200px;
+            border: 3px solid #333;
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.1);
+            animation: screenFlicker 0.1s infinite alternate;
+        }
+
+        @keyframes screenFlicker {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.98;
+            }
+        }
+
+        .atm-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            animation: keypadSlideIn 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes keypadSlideIn {
+            from {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .atm-key {
+            background: linear-gradient(135deg, var(--primary-color), #45a049);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .atm-key::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .atm-key:hover::before {
+            width: 100px;
+            height: 100px;
+        }
+
+        .atm-key:hover {
+            background: linear-gradient(135deg, var(--accent-color), #1976d2);
+            transform: scale(1.05);
+        }
+
+        .atm-key:active {
+            transform: scale(0.95);
+            animation: keyPress 0.1s ease-out;
+        }
+
+        @keyframes keyPress {
+            0% {
+                transform: scale(1.05);
+            }
+
+            50% {
+                transform: scale(0.95);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* New Games */
+        .money-counting-game {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .coin,
+        .note {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: moneyFloat 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        .note {
+            border-radius: 10px;
+            width: 100px;
+            height: 60px;
+        }
+
+        .coin:nth-child(odd),
+        .note:nth-child(odd) {
+            animation-delay: 0.5s;
+        }
+
+        .coin:nth-child(even),
+        .note:nth-child(even) {
+            animation-delay: 1s;
+        }
+
+        @keyframes moneyFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(5deg);
+            }
+        }
+
+        .coin:hover,
+        .note:hover {
+            transform: scale(1.1) rotate(10deg);
+            animation: moneySparkle 0.6s ease-out;
+        }
+
+        @keyframes moneySparkle {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 rgba(255, 215, 0, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            }
+        }
+
+        .coin-1 {
+            background: linear-gradient(135deg, #CD7F32, #A0522D);
+            color: white;
+        }
+
+        .coin-2 {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            color: #333;
+        }
+
+        .coin-5 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+        }
+
+        .coin-10 {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            color: #333;
+        }
+
+        .note-10 {
+            background: linear-gradient(135deg, #FF6B6B, #FF5252);
+            color: white;
+        }
+
+        .note-20 {
+            background: linear-gradient(135deg, #4ECDC4, #26A69A);
+            color: white;
+        }
+
+        .note-50 {
+            background: linear-gradient(135deg, #45B7D1, #2196F3);
+            color: white;
+        }
+
+        .note-100 {
+            background: linear-gradient(135deg, #96CEB4, #4CAF50);
+            color: white;
+        }
+
+        /* Bank Building Game */
+        .bank-building-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            min-height: 200px;
+        }
+
+        .building-block {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            border: 2px dashed #2196F3;
+            border-radius: 10px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .building-block:hover {
+            background: linear-gradient(135deg, #BBDEFB, #90CAF9);
+            transform: scale(1.05);
+        }
+
+        .building-part {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px;
+            cursor: grab;
+            transition: var(--transition);
+            animation: partWiggle 2s ease-in-out infinite;
+        }
+
+        .building-part:nth-child(odd) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes partWiggle {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(1deg);
+            }
+
+            75% {
+                transform: rotate(-1deg);
+            }
+        }
+
+        .building-part:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .building-part.dragging {
+            opacity: 0.7;
+            transform: scale(1.1) rotate(10deg);
+            z-index: 1000;
+        }
+
+        /* Quiz Enhanced Animations */
+        .quiz-container {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            animation: quizSlideIn 0.6s ease-out;
+        }
+
+        @keyframes quizSlideIn {
+            from {
+                transform: translateX(-30px) rotateY(-10deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0) rotateY(0deg);
+                opacity: 1;
+            }
+        }
+
+        .question {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            animation: questionTypewriter 2s ease-out;
+        }
+
+        @keyframes questionTypewriter {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        .option {
+            background: var(--bg-color);
+            border: 2px solid transparent;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            animation: optionSlideIn 0.4s ease-out both;
+            overflow: hidden;
+        }
+
+        .option:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .option:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .option:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .option:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes optionSlideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(33, 150, 243, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            border-color: var(--accent-color);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option.selected {
+            border-color: var(--primary-color);
+            background: rgba(76, 175, 80, 0.1);
+            animation: optionSelected 0.3s ease-out;
+        }
+
+        @keyframes optionSelected {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .option.correct {
+            border-color: var(--primary-color);
+            background: rgba(76, 175, 80, 0.2);
+            animation: correctAnswer 0.6s ease-out;
+        }
+
+        @keyframes correctAnswer {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.05);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            75% {
+                transform: scale(1.05);
+            }
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: rgba(244, 67, 54, 0.2);
+            animation: incorrectAnswer 0.6s ease-out;
+        }
+
+        @keyframes incorrectAnswer {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Button Enhanced Animations */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: btnSlideIn 0.5s ease-out;
+        }
+
+        @keyframes btnSlideIn {
+            from {
+                transform: translateY(20px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(1.02);
+            animation: btnPress 0.1s ease-out;
+        }
+
+        @keyframes btnPress {
+            0% {
+                transform: scale(1.05);
+            }
+
+            50% {
+                transform: scale(0.98);
+            }
+
+            100% {
+                transform: scale(1.02);
+            }
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            animation: btnDisabled 2s ease-in-out infinite;
+        }
+
+        @keyframes btnDisabled {
+
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* Message Enhanced Animations */
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            animation: messageSlideIn 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                transform: translateY(-20px) scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: messageShine 2s infinite;
+        }
+
+        @keyframes messageShine {
+            0% {
+                left: -100%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .message.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            animation: successPulse 0.6s ease-out;
+        }
+
+        @keyframes successPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .message.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 2px solid #f44336;
+            animation: errorShake 0.6s ease-out;
+        }
+
+        @keyframes errorShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* Modal Enhanced Animations */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: modalFadeIn 0.4s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+
+            to {
+                opacity: 1;
+                backdrop-filter: blur(5px);
+            }
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.7) translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            transform: rotate(90deg) scale(1.1);
+        }
+
+        /* Floating Elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-coin {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatCoin 10s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes floatCoin {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        .floating-coin:nth-child(1) {
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-coin:nth-child(2) {
+            left: 30%;
+            animation-delay: 2s;
+        }
+
+        .floating-coin:nth-child(3) {
+            left: 50%;
+            animation-delay: 4s;
+        }
+
+        .floating-coin:nth-child(4) {
+            left: 70%;
+            animation-delay: 6s;
+        }
+
+        .floating-coin:nth-child(5) {
+            left: 90%;
+            animation-delay: 8s;
+        }
+
+        /* Responsive Enhanced */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .logo h1 {
+                font-size: 2rem;
+            }
+
+            .user-stats {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .levels-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                justify-content: center;
+            }
+
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+            }
+
+            .atm-simulator {
+                grid-template-columns: 1fr;
+            }
+
+            .money-counting-game {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .bank-building-game {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Additional Fun Animations */
+        .celebration {
+            animation: celebrate 1s ease-out;
+        }
+
+        @keyframes celebrate {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            25% {
+                transform: scale(1.1) rotate(-5deg);
+            }
+
+            50% {
+                transform: scale(1.2) rotate(0deg);
+            }
+
+            75% {
+                transform: scale(1.1) rotate(5deg);
+            }
+        }
+
+        .wiggle {
+            animation: wiggle 0.5s ease-in-out;
+        }
+
+        @keyframes wiggle {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(-3deg);
+            }
+
+            75% {
+                transform: rotate(3deg);
+            }
+        }
+
+        .rainbow-text {
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 3s ease-in-out infinite;
+        }
+
+        @keyframes rainbow {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">🏦</div>
+        <div class="loading-text">Welcome to Finance Dost!</div>
+        <div class="loading-spinner"></div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar"></div>
+        </div>
+    </div>
+
+    <!-- Theme Transition Overlay -->
+    <div class="theme-transition" id="themeTransition"></div>
+
+    <!-- Floating Background Elements -->
+    <div class="floating-elements">
+        <div class="floating-coin">💰</div>
+        <div class="floating-coin">🪙</div>
+        <div class="floating-coin">💳</div>
+        <div class="floating-coin">🏦</div>
+        <div class="floating-coin">💵</div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="mascot" id="mascot" title="Hi! I'm Chintu the Banker!">🏦</div>
+                    <h1>Finance Dost</h1>
+                </div>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <div>Level</div>
+                        <div id="currentLevel">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Points</div>
+                        <div id="totalPoints">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div>Badges</div>
+                        <div id="totalBadges">0</div>
+                    </div>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-section="levels">📚 Levels</button>
+            <button class="nav-tab" data-section="leaderboard">🏆 Leaderboard</button>
+            <button class="nav-tab" data-section="badges">🎖️ Badges</button>
+            <button class="nav-tab" data-section="help">❓ Help</button>
+        </nav>
+
+        <!-- Levels Section -->
+        <section class="content-section active" id="levels">
+            <div class="levels-grid" id="levelsGrid">
+                <!-- Levels will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section class="content-section" id="leaderboard">
+            <div class="leaderboard">
+                <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">🏆 Top Learners</h2>
+                <div id="leaderboardList">
+                    <!-- Leaderboard items will be dynamically generated -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Badges Section -->
+        <section class="content-section" id="badges">
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">🎖️ Your Achievements</h2>
+            <div class="badges-container" id="badgesContainer">
+                <!-- Badges will be dynamically generated -->
+            </div>
+        </section>
+
+        <!-- Help Section -->
+        <section class="content-section" id="help">
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--primary-color);">❓ Help Corner</h2>
+            <div id="faqContainer">
+                <!-- FAQ items will be dynamically generated -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal for Level Content -->
+    <div class="modal" id="levelModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModal">&times;</button>
+            <div id="modalContent">
+                <!-- Level content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game Data and State
+        const gameState = {
+            currentLevel: 1,
+            totalPoints: 0,
+            completedLevels: [],
+            earnedBadges: [],
+            leaderboard: [],
+            theme: 'light'
+        };
+
+        // Enhanced Level Data with more games
+        const levels = [
+            {
+                id: 1,
+                title: "Why Do We Need Banks?",
+                description: "Why banks are important",
+                content: "Banks are like safe houses for our money! They keep our money secure and help us save for the future. Think of a bank as a giant piggy bank that never breaks! 🏦",
+                quiz: {
+                    question: "What is the main purpose of a bank?",
+                    options: [
+                        "To keep money safe",
+                        "To sell food",
+                        "To make clothes",
+                        "To build houses"
+                    ],
+                    correct: 0
+                },
+                points: 100
+            },
+            {
+                id: 2,
+        title: "Types of Banks",
+        description: "Know the kinds of banks",
+                content: "There are different types of banks: Commercial banks for everyday banking, Cooperative banks for communities, and Government banks for public services. Each bank has its own special job! 🏛️",
+                quiz: {
+                    question: "Which bank is best for daily transactions?",
+                    options: [
+                        "Investment bank",
+                        "Commercial bank",
+                        "Central bank",
+                        "Food bank"
+                    ],
+                    correct: 1
+                },
+                points: 150
+            },
+            {
+                id: 3,
+                title: "Opening Your First Bank Account",
+                description: "How to open a bank account",
+                content: "To open a bank account, you need: 1) Identity proof (Aadhaar card), 2) Address proof, 3) Photographs, 4) Initial deposit money. It's like getting a membership to a special club! 📋",
+                quiz: {
+                    question: "What documents do you need to open a bank account?",
+                    options: [
+                        "Only money",
+                        "Identity and address proof",
+                        "Only photographs",
+                        "Nothing"
+                    ],
+                    correct: 1
+                },
+                miniGame: "documentCheck",
+                points: 200
+            },
+            {
+                id: 4,
+                title: "Filling Bank Forms",
+                 description: "Fill bank forms correctly",
+                content: "Bank forms need accurate information: Full name, address, phone number, and signature. Always write clearly and double-check! Remember, neat handwriting shows you care! ✍️",
+                quiz: {
+                    question: "What should you do before submitting a bank form?",
+                    options: [
+                        "Submit immediately",
+                        "Double-check all information",
+                        "Leave it blank",
+                        "Ask someone else to fill it"
+                    ],
+                    correct: 1
+                },
+                points: 150
+            },
+            {
+                id: 5,
+                title: "Making Your First Deposit",
+                description: "How to deposit money",
+                content: "To deposit money: 1) Fill the deposit slip, 2) Write account number, 3) Count money carefully, 4) Get receipt from bank teller. It's like putting money in a magic safe! 💰",
+                quiz: {
+                    question: "What do you need to fill before depositing money?",
+                    options: [
+                        "Withdrawal slip",
+                        "Deposit slip",
+                        "Check book",
+                        "Nothing"
+                    ],
+                    correct: 1
+                },
+                miniGame: "moneyCountingGame",
+                points: 200
+            },
+            {
+                id: 6,
+                title: "ATM Basics ",
+                description: "Learn about ATMs",
+                content: "ATM (Automated Teller Machine) is like a robot banker! You can withdraw money, check balance, and transfer funds 24/7. It never sleeps and is always ready to help! 🤖",
+                quiz: {
+                    question: "What does ATM stand for?",
+                    options: [
+                        "Automated Teller Machine",
+                        "Any Time Money",
+                        "All Time Machine",
+                        "Always Take Money"
+                    ],
+                    correct: 0
+                },
+                miniGame: "atmSimulator",
+                points: 250
+            },
+            {
+                id: 7,
+                title: "Using ATM Cards Safely",
+                  description: "ATM safety tips",
+                content: "ATM Safety Rules: 1) Never share your PIN, 2) Cover keypad while typing, 3) Check for suspicious devices, 4) Take your receipt. Your PIN is like a secret password! 🔐",
+                quiz: {
+                    question: "What should you do with your ATM PIN?",
+                    options: [
+                        "Share with friends",
+                        "Write it on the card",
+                        "Keep it secret",
+                        "Tell everyone"
+                    ],
+                    correct: 2
+                },
+                points: 200
+            },
+            {
+                id: 8,
+                title: "Understanding Bank Statements",
+               description: "Read your money report",
+                content: "Bank statements show: Opening balance, all transactions (deposits/withdrawals), dates, and closing balance. Check it monthly! It's like a report card for your money! 📊",
+                quiz: {
+                    question: "How often should you check your bank statement?",
+                    options: [
+                        "Never",
+                        "Once a year",
+                        "Monthly",
+                        "Only when problems occur"
+                    ],
+                    correct: 2
+                },
+                points: 180
+            },
+            {
+                id: 9,
+                title: "What is UPI?",
+                description: "Introduction to Unified Payments Interface",
+                content: "UPI is like magic for money transfer! Send money instantly using just a phone number or UPI ID. It's fast, safe, and free! Like sending a text message but with money! 📱",
+                quiz: {
+                    question: "What do you need to send money via UPI?",
+                    options: [
+                        "Cash only",
+                        "UPI ID or phone number",
+                        "Physical presence",
+                        "Bank visit"
+                    ],
+                    correct: 1
+                },
+                points: 300
+            },
+            {
+                id: 10,
+                title: "Digital Payment Apps",
+                 description: "Best UPI apps in India",
+                content: "Popular UPI apps: PhonePe, Google Pay, Paytm, BHIM. All are safe and government-approved for digital payments. Choose your favorite superhero app! 🦸‍♂️",
+                quiz: {
+                    question: "Which is a popular UPI app in India?",
+                    options: [
+                        "WhatsApp only",
+                        "Google Pay",
+                        "Calculator",
+                        "Camera"
+                    ],
+                    correct: 1
+                },
+                miniGame: "bankBuildingGame",
+                points: 250
+            }
+        ];
+
+        // Enhanced Badge definitions
+        const badges = [
+            { id: 'first_steps', name: 'First Steps', description: 'Complete your first level', icon: '👶', requirement: 1 },
+            { id: 'atm_ninja', name: 'ATM Ninja', description: 'Master ATM operations', icon: '🥷', requirement: 6 },
+            { id: 'form_master', name: 'Form Master', description: 'Excel at filling bank forms', icon: '📝', requirement: 4 },
+            { id: 'digital_pioneer', name: 'Digital Pioneer', description: 'Learn about UPI and digital payments', icon: '📱', requirement: 9 },
+            { id: 'safety_expert', name: 'Safety Expert', description: 'Master banking security', icon: '🛡️', requirement: 7 },
+            { id: 'money_counter', name: 'Money Counter', description: 'Excel at counting money', icon: '💰', requirement: 5 },
+            { id: 'bank_builder', name: 'Bank Builder', description: 'Build your first virtual bank', icon: '🏗️', requirement: 10 },
+            { id: 'level_5', name: 'Banking Basics', description: 'Complete first 5 levels', icon: '🏆', requirement: 5 },
+            { id: 'level_10', name: 'Digital Expert', description: 'Complete first 10 levels', icon: '💎', requirement: 10 }
+        ];
+
+        // Enhanced FAQ Data
+      const faqData = [
+    {
+        question: "What is KYC?",
+        answer: "KYC means banks check who you are using your ID documents. It keeps banking safe. 🤝"
+    },
+    {
+        question: "Is it safe to use ATMs?",
+        answer: "Yes, ATMs are safe if you keep your PIN secret and stay alert. 🤖"
+    },
+    {
+        question: "What is the minimum age to open a bank account?",
+        answer: "You can open one at any age, but kids need help from a parent. 👶"
+    },
+    {
+        question: "How does UPI work?",
+        answer: "UPI lets you send money using a phone number or UPI ID—no bank details needed! ✨"
+    },
+    {
+        question: "What should I do if I lose my ATM card?",
+        answer: "Call the bank right away to block it. Help is always available. 📞"
+    },
+    {
+        question: "How much money should I save?",
+        answer: "Try to save 20% of what you earn. Even ₹10 a day makes a big difference! 🐷"
+    }
+];
+
+
+        // Initialize the game with loading screen
+        function initGame() {
+            showLoadingScreen();
+            setTimeout(() => {
+                hideLoadingScreen();
+                loadGameState();
+                updateUI();
+                generateLevels();
+                generateBadges();
+                generateFAQ();
+                generateLeaderboard();
+                setupEventListeners();
+                startFloatingAnimation();
+            }, 3000);
+        }
+
+        // Loading screen functions
+        function showLoadingScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.remove('hidden');
+        }
+
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('hidden');
+        }
+
+        // Enhanced theme toggle with transition effect
+        function toggleTheme() {
+            const transition = document.getElementById('themeTransition');
+            transition.classList.add('active');
+
+            setTimeout(() => {
+                gameState.theme = gameState.theme === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', gameState.theme);
+                updateThemeToggle();
+                saveGameState();
+
+                setTimeout(() => {
+                    transition.classList.remove('active');
+                }, 300);
+            }, 300);
+        }
+
+        function updateThemeToggle() {
+            const toggle = document.getElementById('themeToggle');
+            toggle.textContent = gameState.theme === 'light' ? '🌙' : '☀️';
+        }
+
+        // Load game state from localStorage
+        function loadGameState() {
+            const saved = localStorage.getItem('financeDoestGameState');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                Object.assign(gameState, savedState);
+            }
+
+            document.documentElement.setAttribute('data-theme', gameState.theme);
+            updateThemeToggle();
+        }
+
+        // Save game state to localStorage
+        function saveGameState() {
+            localStorage.setItem('financeDoestGameState', JSON.stringify(gameState));
+        }
+
+        // Update UI elements with animations
+        function updateUI() {
+            animateCounter('currentLevel', gameState.currentLevel);
+            animateCounter('totalPoints', gameState.totalPoints);
+            animateCounter('totalBadges', gameState.earnedBadges.length);
+        }
+
+        // Animate counter numbers
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            const currentValue = parseInt(element.textContent) || 0;
+            const increment = Math.ceil((targetValue - currentValue) / 20);
+
+            if (currentValue < targetValue) {
+                element.textContent = Math.min(currentValue + increment, targetValue);
+                setTimeout(() => animateCounter(elementId, targetValue), 50);
+            }
+        }
+
+        // Generate level cards with enhanced animations
+        function generateLevels() {
+            const container = document.getElementById('levelsGrid');
+            container.innerHTML = '';
+
+            levels.forEach((level, index) => {
+                const isCompleted = gameState.completedLevels.includes(level.id);
+                const isLocked = level.id > gameState.currentLevel;
+                const progress = isCompleted ? 100 : (level.id === gameState.currentLevel ? 50 : 0);
+
+                const card = document.createElement('div');
+                card.className = `level-card ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
+                card.style.animationDelay = `${index * 0.1}s`;
+
+                card.innerHTML = `
+                    <div class="level-header">
+                        <div class="level-number">${level.id}</div>
+                        <div class="level-status">${isCompleted ? '✅' : isLocked ? '🔒' : '▶️'}</div>
+                    </div>
+                    <div class="level-title">${level.title}</div>
+                    <div class="level-description">${level.description}</div>
+                    <div class="level-progress">
+                        <div class="level-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div style="text-align: center; color: var(--secondary-color); font-weight: bold;">
+                        ${level.points} Points
+                    </div>
+                `;
+
+                if (!isLocked) {
+                    card.addEventListener('click', () => {
+                        card.classList.add('celebration');
+                        setTimeout(() => card.classList.remove('celebration'), 1000);
+                        openLevel(level);
+                    });
+                } else {
+                    card.addEventListener('click', () => {
+                        card.classList.add('wiggle');
+                        setTimeout(() => card.classList.remove('wiggle'), 500);
+                        showMessage('Complete the previous level first! 🔒', 'error');
+                    });
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // Enhanced level modal with more games
+        function openLevel(level) {
+            const modal = document.getElementById('levelModal');
+            const content = document.getElementById('modalContent');
+
+            content.innerHTML = `
+                <h2 style="color: var(--primary-color); margin-bottom: 20px;" class="rainbow-text">
+                    Level ${level.id}: ${level.title}
+                </h2>
+                <div style="background: var(--bg-color); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                    <p style="font-size: 1.1rem; line-height: 1.6;">${level.content}</p>
+                </div>
+                ${level.miniGame ? generateMiniGame(level.miniGame) : ''}
+                <div class="quiz-container">
+                    <h3 style="color: var(--accent-color); margin-bottom: 15px;">📝 Quick Quiz</h3>
+                    <div class="question">${level.quiz.question}</div>
+                    <div class="options" id="quizOptions">
+                        ${level.quiz.options.map((option, index) =>
+                `<div class="option" data-index="${index}">${option}</div>`
+            ).join('')}
+                    </div>
+                    <button class="btn" id="submitQuiz" disabled>Submit Answer</button>
+                    <div id="quizResult"></div>
+                </div>
+            `;
+
+            setupQuiz(level);
+            if (level.miniGame) {
+                setupMiniGame(level.miniGame);
+            }
+
+            modal.classList.add('active');
+        }
+
+        // Enhanced mini-game generation with new games
+        function generateMiniGame(gameType) {
+            switch (gameType) {
+                case 'atmSimulator':
+                    return `
+                        <div class="mini-game">
+                            <h3 style="color: var(--accent-color); margin-bottom: 15px;">🏧 ATM Simulator</h3>
+                            <div class="atm-simulator">
+                                <div class="atm-keypad">
+                                    ${[1, 2, 3, 4, 5, 6, 7, 8, 9, '*', 0, '#'].map(key =>
+                        `<button class="atm-key" data-key="${key}">${key}</button>`
+                    ).join('')}
+                                </div>
+                                <div class="atm-screen" id="atmScreen">
+                                    Welcome to ATM<br>
+                                    Enter your 4-digit PIN:<br>
+                                    <span id="pinDisplay">****</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px;">
+                                <strong>Try entering PIN: 1234</strong>
+                            </div>
+                        </div>
+                    `;
+                case 'documentCheck':
+                    return `
+                        <div class="mini-game">
+                            <h3 style="color: var(--accent-color); margin-bottom: 15px;">📄 Document Checker</h3>
+                            <p>Check which documents are needed for opening a bank account:</p>
+                            <div style="display: grid; gap: 10px; margin: 15px 0;">
+                                ${['Aadhaar Card', 'Passport Photo', 'Grocery Receipt', 'Address Proof', 'Movie Ticket'].map(doc =>
+                        `<label style="display: flex; align-items: center; gap: 10px;">
+                                        <input type="checkbox" data-doc="${doc}">
+                                        <span>${doc}</span>
+                                    </label>`
+                    ).join('')}
+                            </div>
+                            <button class="btn" id="checkDocuments">Check Documents</button>
+                            <div id="documentResult"></div>
+                        </div>
+                    `;
+                case 'moneyCountingGame':
+                    return `
+                        <div class="mini-game">
+                            <h3 style="color: var(--accent-color); margin-bottom: 15px;">💰 Money Counting Game</h3>
+                            <p>Click on the coins and notes to count money! Target: ₹100</p>
+                            <div class="money-counting-game">
+                                <div class="coin coin-1" data-value="1">₹1</div>
+                                <div class="coin coin-2" data-value="2">₹2</div>
+                                <div class="coin coin-5" data-value="5">₹5</div>
+                                <div class="coin coin-10" data-value="10">₹10</div>
+                                <div class="note note-10" data-value="10">₹10</div>
+                                <div class="note note-20" data-value="20">₹20</div>
+                                <div class="note note-50" data-value="50">₹50</div>
+                                <div class="note note-100" data-value="100">₹100</div>
+                            </div>
+                            <div style="text-align: center; margin-top: 15px;">
+                                <strong>Total: ₹<span id="moneyTotal">0</span></strong>
+                                <button class="btn" id="resetMoney" style="margin-left: 10px;">Reset</button>
+                            </div>
+                            <div id="moneyResult"></div>
+                        </div>
+                    `;
+                case 'bankBuildingGame':
+                    return `
+                        <div class="mini-game">
+                            <h3 style="color: var(--accent-color); margin-bottom: 15px;">🏗️ Build Your Bank</h3>
+                            <p>Drag and drop the building parts to create your bank!</p>
+                            <div style="margin-bottom: 15px;">
+                                <div class="building-part" draggable="true" data-part="foundation">🏗️ Foundation</div>
+                                <div class="building-part" draggable="true" data-part="walls">🧱 Walls</div>
+                                <div class="building-part" draggable="true" data-part="roof">🏠 Roof</div>
+                                <div class="building-part" draggable="true" data-part="door">🚪 Door</div>
+                                <div class="building-part" draggable="true" data-part="sign">🏦 Bank Sign</div>
+                            </div>
+                            <div class="bank-building-game" id="buildingArea">
+                                <div class="building-block" data-slot="foundation">Foundation</div>
+                                <div class="building-block" data-slot="walls">Walls</div>
+                                <div class="building-block" data-slot="roof">Roof</div>
+                                <div class="building-block" data-slot="door">Door</div>
+                            </div>
+                            <div id="buildingResult"></div>
+                        </div>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // Enhanced mini-game setup with new games
+        function setupMiniGame(gameType) {
+            switch (gameType) {
+                case 'atmSimulator':
+                    setupATMSimulator();
+                    break;
+                case 'documentCheck':
+                    setupDocumentChecker();
+                    break;
+                case 'moneyCountingGame':
+                    setupMoneyCountingGame();
+                    break;
+                case 'bankBuildingGame':
+                    setupBankBuildingGame();
+                    break;
+            }
+        }
+
+        // ATM Simulator setup
+        function setupATMSimulator() {
+            let enteredPin = '';
+            const correctPin = '1234';
+            const screen = document.getElementById('atmScreen');
+            const pinDisplay = document.getElementById('pinDisplay');
+
+            document.querySelectorAll('.atm-key').forEach(key => {
+                key.addEventListener('click', () => {
+                    const keyValue = key.dataset.key;
+                    key.classList.add('celebration');
+                    setTimeout(() => key.classList.remove('celebration'), 300);
+
+                    if (keyValue === '*') {
+                        enteredPin = '';
+                        pinDisplay.textContent = '****';
+                        screen.innerHTML = `
+                            Welcome to ATM<br>
+                            Enter your 4-digit PIN:<br>
+                            <span id="pinDisplay">****</span>
+                        `;
+                    } else if (keyValue === '#') {
+                        if (enteredPin === correctPin) {
+                            screen.innerHTML = `
+                                <div class="rainbow-text">✅ PIN Correct!</div><br>
+                                Select Transaction:<br>
+                                1. Balance Inquiry<br>
+                                2. Cash Withdrawal<br>
+                                3. Mini Statement<br>
+                                <div style="animation: pulse 2s infinite;">Thank you for using ATM!</div>
+                            `;
+                            showMessage('Great! You successfully used the ATM! 🎉', 'success');
+                        } else {
+                            screen.innerHTML = `
+                                <div style="color: #ff0000;">❌ Incorrect PIN</div><br>
+                                Please try again<br>
+                                Enter PIN: <span id="pinDisplay">****</span>
+                            `;
+                            enteredPin = '';
+                            screen.classList.add('shake');
+                            setTimeout(() => screen.classList.remove('shake'), 500);
+                        }
+                    } else if (enteredPin.length < 4) {
+                        enteredPin += keyValue;
+                        const newDisplay = '*'.repeat(enteredPin.length) + '*'.repeat(4 - enteredPin.length);
+                        if (pinDisplay) {
+                            pinDisplay.textContent = newDisplay;
+                        }
+                    }
+                });
+            });
+        }
+
+        // Document Checker setup
+        function setupDocumentChecker() {
+            document.getElementById('checkDocuments').addEventListener('click', () => {
+                const checkboxes = document.querySelectorAll('[data-doc]');
+                const correctDocs = ['Aadhaar Card', 'Passport Photo', 'Address Proof'];
+                let correct = 0;
+                let total = 0;
+
+                checkboxes.forEach(checkbox => {
+                    const doc = checkbox.dataset.doc;
+                    const isChecked = checkbox.checked;
+                    const shouldBeChecked = correctDocs.includes(doc);
+
+                    if (isChecked === shouldBeChecked) {
+                        correct++;
+                    }
+                    total++;
+                });
+
+                const result = document.getElementById('documentResult');
+                if (correct === total) {
+                    result.innerHTML = '<div class="message success">Perfect! You selected all the correct documents! 🎉</div>';
+                } else {
+                    result.innerHTML = `<div class="message error">You got ${correct}/${total} correct. Try again! The correct documents are: Aadhaar Card, Passport Photo, and Address Proof.</div>`;
+                }
+            });
+        }
+
+        // Money Counting Game setup
+        function setupMoneyCountingGame() {
+            let totalMoney = 0;
+            const target = 100;
+            const moneyElements = document.querySelectorAll('.coin, .note');
+            const totalDisplay = document.getElementById('moneyTotal');
+            const resetBtn = document.getElementById('resetMoney');
+
+            moneyElements.forEach(element => {
+                element.addEventListener('click', () => {
+                    const value = parseInt(element.dataset.value);
+                    totalMoney += value;
+                    totalDisplay.textContent = totalMoney;
+
+                    element.classList.add('celebration');
+                    setTimeout(() => element.classList.remove('celebration'), 500);
+
+                    if (totalMoney === target) {
+                        document.getElementById('moneyResult').innerHTML =
+                            '<div class="message success">🎉 Perfect! You counted exactly ₹100!</div>';
+                    } else if (totalMoney > target) {
+                        document.getElementById('moneyResult').innerHTML =
+                            '<div class="message error">Oops! You went over ₹100. Try again!</div>';
+                    }
+                });
+            });
+
+            resetBtn.addEventListener('click', () => {
+                totalMoney = 0;
+                totalDisplay.textContent = '0';
+                document.getElementById('moneyResult').innerHTML = '';
+                moneyElements.forEach(el => {
+                    el.classList.add('wiggle');
+                    setTimeout(() => el.classList.remove('wiggle'), 500);
+                });
+            });
+        }
+
+        // Bank Building Game setup
+        function setupBankBuildingGame() {
+            const buildingParts = document.querySelectorAll('.building-part');
+            const buildingSlots = document.querySelectorAll('.building-block');
+            let completedParts = 0;
+
+            buildingParts.forEach(part => {
+                part.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', part.dataset.part);
+                    part.classList.add('dragging');
+                });
+
+                part.addEventListener('dragend', () => {
+                    part.classList.remove('dragging');
+                });
+            });
+
+            buildingSlots.forEach(slot => {
+                slot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    slot.style.background = 'linear-gradient(135deg, #C8E6C9, #A5D6A7)';
+                });
+
+                slot.addEventListener('dragleave', () => {
+                    slot.style.background = '';
+                });
+
+                slot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const partType = e.dataTransfer.getData('text/plain');
+                    const slotType = slot.dataset.slot;
+
+                    slot.style.background = '';
+
+                    if (partType === slotType) {
+                        slot.innerHTML = `✅ ${partType.charAt(0).toUpperCase() + partType.slice(1)}`;
+                        slot.style.background = 'linear-gradient(135deg, #C8E6C9, #A5D6A7)';
+                        slot.classList.add('celebration');
+                        setTimeout(() => slot.classList.remove('celebration'), 500);
+
+                        completedParts++;
+                        if (completedParts === 4) {
+                            document.getElementById('buildingResult').innerHTML =
+                                '<div class="message success">🏦 Congratulations! You built a complete bank!</div>';
+                        }
+                    } else {
+                        slot.classList.add('shake');
+                        setTimeout(() => slot.classList.remove('shake'), 500);
+                        showMessage('Wrong part! Try again!', 'error');
+                    }
+                });
+            });
+        }
+
+        // Enhanced quiz setup
+        function setupQuiz(level) {
+            const options = document.querySelectorAll('.option');
+            const submitBtn = document.getElementById('submitQuiz');
+            let selectedOption = null;
+
+            options.forEach((option, index) => {
+                option.addEventListener('click', () => {
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    selectedOption = index;
+                    submitBtn.disabled = false;
+
+                    option.classList.add('pulse');
+                    setTimeout(() => option.classList.remove('pulse'), 500);
+                });
+            });
+
+            submitBtn.addEventListener('click', () => {
+                const result = document.getElementById('quizResult');
+                const isCorrect = selectedOption === level.quiz.correct;
+
+                options.forEach((option, index) => {
+                    if (index === level.quiz.correct) {
+                        option.classList.add('correct');
+                    } else if (index === selectedOption && !isCorrect) {
+                        option.classList.add('incorrect');
+                    }
+                });
+
+                if (isCorrect) {
+                    result.innerHTML = '<div class="message success">🎉 Correct! Well done!</div>';
+                    completeLevel(level);
+                } else {
+                    result.innerHTML = '<div class="message error">❌ Not quite right. The correct answer is highlighted in green.</div>';
+                }
+
+                submitBtn.disabled = true;
+            });
+        }
+
+        // Complete a level with enhanced animations
+        function completeLevel(level) {
+            if (!gameState.completedLevels.includes(level.id)) {
+                gameState.completedLevels.push(level.id);
+                gameState.totalPoints += level.points;
+
+                if (level.id === gameState.currentLevel) {
+                    gameState.currentLevel = Math.min(gameState.currentLevel + 1, levels.length);
+                }
+
+                checkBadges();
+                updateLeaderboard();
+                saveGameState();
+                updateUI();
+                generateLevels();
+
+                // Celebration animation
+                const mascot = document.getElementById('mascot');
+                mascot.classList.add('celebration');
+                setTimeout(() => mascot.classList.remove('celebration'), 1000);
+
+                setTimeout(() => {
+                    showMessage(`Level completed! You earned ${level.points} points! 🎉`, 'success');
+                }, 1000);
+            }
+        }
+
+        // Enhanced badge checking
+        function checkBadges() {
+            badges.forEach(badge => {
+                if (!gameState.earnedBadges.includes(badge.id)) {
+                    let earned = false;
+
+                    switch (badge.id) {
+                        case 'first_steps':
+                            earned = gameState.completedLevels.length >= 1;
+                            break;
+                        case 'level_5':
+                            earned = gameState.completedLevels.length >= 5;
+                            break;
+                        case 'level_10':
+                            earned = gameState.completedLevels.length >= 10;
+                            break;
+                        default:
+                            earned = gameState.completedLevels.includes(badge.requirement);
+                    }
+
+                    if (earned) {
+                        gameState.earnedBadges.push(badge.id);
+                        showMessage(`New badge earned: ${badge.name}! ${badge.icon}`, 'success');
+
+                        // Badge celebration animation
+                        setTimeout(() => {
+                            generateBadges();
+                        }, 500);
+                    }
+                }
+            });
+        }
+
+        // Enhanced badge generation
+        function generateBadges() {
+            const container = document.getElementById('badgesContainer');
+            container.innerHTML = '';
+
+            badges.forEach((badge, index) => {
+                const earned = gameState.earnedBadges.includes(badge.id);
+                const badgeEl = document.createElement('div');
+                badgeEl.className = `badge ${earned ? 'earned' : ''}`;
+                badgeEl.style.animationDelay = `${index * 0.1}s`;
+
+                badgeEl.innerHTML = `
+                    <div class="badge-icon">${earned ? badge.icon : '🔒'}</div>
+                    <h3>${badge.name}</h3>
+                    <p>${badge.description}</p>
+                    ${earned ? '<div style="color: var(--primary-color); font-weight: bold;">✅ Earned!</div>' : '<div style="color: #999;">Not earned yet</div>'}
+                `;
+
+                if (earned) {
+                    badgeEl.addEventListener('click', () => {
+                        badgeEl.classList.add('celebration');
+                        setTimeout(() => badgeEl.classList.remove('celebration'), 500);
+                    });
+                }
+
+                container.appendChild(badgeEl);
+            });
+        }
+
+        // Enhanced leaderboard
+        function updateLeaderboard() {
+            const playerName = 'You';
+            const existingIndex = gameState.leaderboard.findIndex(entry => entry.name === playerName);
+
+            if (existingIndex >= 0) {
+                gameState.leaderboard[existingIndex].points = gameState.totalPoints;
+                gameState.leaderboard[existingIndex].level = gameState.currentLevel;
+            } else {
+                gameState.leaderboard.push({
+                    name: playerName,
+                    points: gameState.totalPoints,
+                    level: gameState.currentLevel
+                });
+            }
+
+            // Add sample players for demonstration
+            if (gameState.leaderboard.length === 1) {
+                gameState.leaderboard.push(
+                    { name: 'Priya', points: 2500, level: 15 },
+                    { name: 'Rahul', points: 2200, level: 12 },
+                    { name: 'Anita', points: 1800, level: 10 },
+                    { name: 'Vikash', points: 1500, level: 8 },
+                    { name: 'Sneha', points: 1200, level: 7 },
+                    { name: 'Arjun', points: 1000, level: 6 }
+                );
+            }
+
+            gameState.leaderboard.sort((a, b) => b.points - a.points);
+            generateLeaderboard();
+        }
+
+        // Enhanced leaderboard generation
+        function generateLeaderboard() {
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '';
+
+            gameState.leaderboard.slice(0, 10).forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                item.style.animationDelay = `${index * 0.1}s`;
+
+                const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+
+                item.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div class="rank">${rankEmoji}</div>
+                        <div>
+                            <div style="font-weight: bold; ${entry.name === 'You' ? 'color: var(--primary-color);' : ''}">${entry.name}</div>
+                            <div style="font-size: 0.9rem; color: var(--accent-color);">Level ${entry.level}</div>
+                        </div>
+                    </div>
+                    <div style="font-weight: bold; color: var(--primary-color);">${entry.points} pts</div>
+                `;
+
+                if (entry.name === 'You') {
+                    item.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1))';
+                    item.style.border = '2px solid var(--primary-color)';
+                }
+
+                container.appendChild(item);
+            });
+        }
+
+        // Enhanced FAQ generation
+        function generateFAQ() {
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = '';
+
+            faqData.forEach((faq, index) => {
+                const item = document.createElement('div');
+                item.className = 'faq-item';
+                item.style.animationDelay = `${index * 0.1}s`;
+
+                item.innerHTML = `
+                    <div class="faq-question" data-index="${index}">
+                        ${faq.question}
+                    </div>
+                    <div class="faq-answer" id="faq-${index}">
+                        ${faq.answer}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+
+            // Enhanced FAQ click handlers
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const index = question.dataset.index;
+                    const answer = document.getElementById(`faq-${index}`);
+                    const isActive = answer.classList.contains('active');
+
+                    // Close all other FAQs with animation
+                    document.querySelectorAll('.faq-answer').forEach(ans => {
+                        ans.classList.remove('active');
+                    });
+
+                    // Toggle current FAQ
+                    if (!isActive) {
+                        answer.classList.add('active');
+                    }
+
+                    question.classList.add('pulse');
+                    setTimeout(() => question.classList.remove('pulse'), 300);
+                });
+            });
+        }
+
+        // Enhanced message system
+        function showMessage(text, type = 'info') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            message.style.position = 'fixed';
+            message.style.top = '20px';
+            message.style.right = '20px';
+            message.style.zIndex = '9999';
+            message.style.maxWidth = '300px';
+
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.style.animation = 'messageSlideIn 0.5s ease-out reverse';
+                setTimeout(() => {
+                    message.remove();
+                }, 500);
+            }, 3000);
+        }
+
+        // Start floating animation
+        function startFloatingAnimation() {
+            const floatingElements = document.querySelector('.floating-elements');
+            if (floatingElements) {
+                setInterval(() => {
+                    if (Math.random() < 0.3) {
+                        const coins = floatingElements.children;
+                        const randomCoin = coins[Math.floor(Math.random() * coins.length)];
+                        randomCoin.style.animationDuration = `${8 + Math.random() * 4}s`;
+                    }
+                }, 2000);
+            }
+        }
+
+        // Enhanced event listeners setup
+        function setupEventListeners() {
+            // Navigation tabs with enhanced animations
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const section = tab.dataset.section;
+
+                    // Update active tab with animation
+                    document.querySelectorAll('.nav-tab').forEach(t => {
+                        t.classList.remove('active');
+                        t.classList.add('wiggle');
+                        setTimeout(() => t.classList.remove('wiggle'), 300);
+                    });
+                    tab.classList.add('active');
+
+                    // Show corresponding section with animation
+                    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                    document.getElementById(section).classList.add('active');
+                });
+            });
+
+            // Enhanced theme toggle
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+            // Enhanced modal close
+            document.getElementById('closeModal').addEventListener('click', () => {
+                const modal = document.getElementById('levelModal');
+                modal.style.animation = 'modalFadeIn 0.4s ease-out reverse';
+                setTimeout(() => {
+                    modal.classList.remove('active');
+                    modal.style.animation = '';
+                }, 400);
+            });
+
+            // Close modal on outside click
+            document.getElementById('levelModal').addEventListener('click', (e) => {
+                if (e.target.id === 'levelModal') {
+                    document.getElementById('closeModal').click();
+                }
+            });
+
+            // Enhanced mascot interaction
+            document.getElementById('mascot').addEventListener('click', () => {
+                const messages = [
+                    "Hi! I'm Chintu the Banker! 🏦",
+                    "Keep learning and you'll become a banking expert! 💪",
+                    "Remember to always keep your PIN secret! 🤫",
+                    "Digital payments are the future! 📱",
+                    "Saving money is a great habit! 💰",
+                    "Banks are your friends for financial growth! 🌱",
+                    "Every rupee saved is a rupee earned! 🐷",
+                    "Learning about money makes you smart! 🧠"
+                ];
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                showMessage(randomMessage, 'info');
+
+                const mascot = document.getElementById('mascot');
+                mascot.classList.add('celebration');
+                setTimeout(() => mascot.classList.remove('celebration'), 1000);
+            });
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('levelModal');
+                    if (modal.classList.contains('active')) {
+                        document.getElementById('closeModal').click();
+                    }
+                }
+
+                if (e.key === 't' && e.ctrlKey) {
+                    e.preventDefault();
+                    toggleTheme();
+                }
+            });
+        }
+
+        // Add periodic animations
+        function addPeriodicAnimations() {
+            setInterval(() => {
+                const mascot = document.getElementById('mascot');
+                if (mascot && Math.random() < 0.1) {
+                    mascot.classList.add('pulse');
+                    setTimeout(() => mascot.classList.remove('pulse'), 2000);
+                }
+            }, 5000);
+
+            // Random sparkle effects
+            setInterval(() => {
+                if (Math.random() < 0.2) {
+                    const cards = document.querySelectorAll('.level-card.completed');
+                    if (cards.length > 0) {
+                        const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                        randomCard.style.animation = 'completedGlow 1s ease-in-out';
+                        setTimeout(() => {
+                            randomCard.style.animation = '';
+                        }, 1000);
+                    }
+                }
+            }, 3000);
+        }
+
+        // Initialize the game when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initGame();
+            addPeriodicAnimations();
+        });
+
+        // Add some fun sound effects (visual feedback)
+        function playVisualSound(type) {
+            const body = document.body;
+            switch (type) {
+                case 'success':
+                    body.style.animation = 'successPulse 0.3s ease-out';
+                    break;
+                case 'error':
+                    body.style.animation = 'errorShake 0.3s ease-out';
+                    break;
+                case 'click':
+                    // Add click ripple effect
+                    break;
+            }
+            setTimeout(() => {
+                body.style.animation = '';
+            }, 300);
+        }
+
+        // Enhanced performance optimization
+        function optimizeAnimations() {
+            // Reduce animations on slower devices
+            if (navigator.hardwareConcurrency < 4) {
+                document.documentElement.style.setProperty('--transition', 'all 0.2s ease');
+            }
+        }
+
+        // Call optimization
+        optimizeAnimations();
+    </script>
+</body>
+
+</html>
